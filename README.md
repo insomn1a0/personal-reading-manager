@@ -37,30 +37,6 @@ It focuses on readable code, fast setup, and a presentable user experience rathe
 - Maven
 - Bootstrap 5
 
-## Screenshots
-
-Add screenshots after pushing the repository to GitHub.
-
-- `docs/screenshots/dashboard.png`  
-  Dashboard with statistics, yearly goal, and recent books
-- `docs/screenshots/books-list.png`  
-  Book catalog with search, filters, sorting, and cover thumbnails
-- `docs/screenshots/book-details.png`  
-  Detailed book page with metadata, notes, and quote
-- `docs/screenshots/book-form.png`  
-  Book editor with validation and tracking fields
-
-Example Markdown after adding images:
-
-```md
-## Screenshots
-
-### Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-
-### Books List
-![Books List](docs/screenshots/books-list.png)
-```
 
 ## How To Run
 
@@ -102,58 +78,10 @@ Included sample content:
 - category-style tags / groupings
 - shelves / collections such as `Favorites`, `Classics`, `Study Books`, and `Sci-Fi Picks`
 
-## Project Structure
 
-```text
-library/
-├── pom.xml
-├── README.md
-├── .gitignore
-└── src/
-    └── main/
-        ├── java/com/example/library/
-        │   ├── config/
-        │   ├── controller/
-        │   ├── dto/
-        │   ├── entity/
-        │   ├── repository/
-        │   └── service/
-        └── resources/
-            ├── static/
-            │   ├── css/
-            │   └── js/
-            ├── templates/
-            │   ├── authors/
-            │   ├── books/
-            │   ├── categories/
-            │   ├── dashboard/
-            │   ├── fragments/
-            │   └── import/
-            └── application.properties
-```
 
-## Why This Project Works Well For A Portfolio
 
-- Clean layered Spring Boot structure
-- Real UI polish with Bootstrap, theming, and responsive pages
-- Practical REST + server-rendered web combination
-- External API integration
-- Student-friendly scope without unnecessary abstraction
 
-## Future Improvements
 
-- Add uploaded cover images instead of URL-only covers
-- Add dedicated tags as a separate entity
-- Add pagination for large libraries
-- Add basic authentication for personal accounts
-- Add export to CSV or PDF
-- Add screenshot assets and deployment instructions
 
-## Author
-
-Replace this section with your details before publishing:
-
-- Name: `Your Name`
-- GitHub: `https://github.com/your-username`
-- LinkedIn: `https://linkedin.com/in/your-profile`
 
