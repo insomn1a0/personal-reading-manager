@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${book.id == null ? 'Create Book' : 'Edit Book'})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('books')}"></nav>
+
+<main class="container page-shell">
+    <section class="hero-card mb-4">
+        <span class="badge text-bg-light border rounded-pill px-3 py-2 mb-3">Book editor</span>
+        <h1 class="display-6 fw-bold mb-2" th:text="${book.id == null ? 'Add a new book' : 'Edit book details'}">Book form</h1>
+        <p class="section-subtitle fs-5 mb-0">A structured form for catalog data, progress tracking, notes, and presentation-friendly metadata.</p>
+    </section>
+
+    <div th:replace="~{fragments/layout :: alerts(${message}, ${error})}"></div>
+
+    <form th:action="@{${formAction}}" th:object="${book}" method="post">
+        <div class="row g-4">
+            <div class="col-12 col-xl-8">
+                <section class="app-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="section-title mb-0">Catalog information</h2>
+                        <span class="badge text-bg-light border rounded-pill px-3 py-2" th:text="${book.id == null ? 'New book' : 'Editing'}">Editing</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="title">Title</label>
+                            <input id="title" type="text" th:field="*{title}" class="form-control" th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'">
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="authorId">Author</label>
+                            <select id="authorId" th:field="*{authorId}" class="form-select" th:classappend="${#fields.hasErrors('authorId')} ? ' is-invalid'">
+                                <option value="">Select author</option>
+                                <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.name}"></option>
+                            </select>
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('authorId')}" th:errors="*{authorId}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="isbn">ISBN</label>
+                            <input id="isbn" type="text" th:field="*{isbn}" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="publishedYear">Published year</label>
+                            <input id="publishedYear" type="number" th:field="*{publishedYear}" class="form-control" th:classappend="${#fields.hasErrors('publishedYear')} ? ' is-invalid'">
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('publishedYear')}" th:errors="*{publishedYear}"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="status">Reading status</label>
+                            <select id="status" th:field="*{status}" class="form-select" th:classappend="${#fields.hasErrors('status')} ? ' is-invalid'">
+                                <option th:each="statusOption : ${statuses}" th:value="${statusOption.name()}" th:text="${statusOption.displayName}"></option>
+                            </select>
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="collectionName">Shelf / collection</label>
+                            <input id="collectionName" type="text" th:field="*{collectionName}" class="form-control" list="collectionOptions" placeholder="Favorites">
+                            <datalist id="collectionOptions">
+                                <option th:each="collection : ${collections}" th:value="${collection}"></option>
+                            </datalist>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="categoryIds">Categories</label>
+                            <select id="categoryIds" th:field="*{categoryIds}" class="form-select" multiple size="6">
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                            </select>
+                            <div class="form-text">Choose one or more categories to organize the catalog.</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="coverImageUrl">Cover image URL</label>
+                            <input id="coverImageUrl" type="url" th:field="*{coverImageUrl}" class="form-control" placeholder="https://example.com/cover.jpg">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea id="description" th:field="*{description}" rows="5" class="form-control" th:classappend="${#fields.hasErrors('description')} ? ' is-invalid'"></textarea>
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-12 col-xl-4">
+                <section class="app-card mb-4">
+                    <h2 class="section-title mb-4">Reading tracker</h2>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="progress">Reading progress (%)</label>
+                            <input id="progress" type="number" min="0" max="100" th:field="*{progress}" class="form-control" th:classappend="${#fields.hasErrors('progress')} ? ' is-invalid'">
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('progress')}" th:errors="*{progress}"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="rating">Rating (1-5)</label>
+                            <input id="rating" type="number" min="1" max="5" th:field="*{rating}" class="form-control" th:classappend="${#fields.hasErrors('rating')} ? ' is-invalid'">
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="favoriteQuote">Favorite quote</label>
+                            <textarea id="favoriteQuote" th:field="*{favoriteQuote}" rows="4" class="form-control" th:classappend="${#fields.hasErrors('favoriteQuote')} ? ' is-invalid'"></textarea>
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('favoriteQuote')}" th:errors="*{favoriteQuote}"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="notes">Notes</label>
+                            <textarea id="notes" th:field="*{notes}" rows="7" class="form-control" th:classappend="${#fields.hasErrors('notes')} ? ' is-invalid'"></textarea>
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="app-card">
+                    <div class="mb-3">
+                        <div class="muted-label mb-2">Live snapshot</div>
+                        <div class="d-flex gap-3 align-items-start">
+                            <img th:if="${book.coverImageUrl != null and !book.coverImageUrl.isBlank()}" th:src="${book.coverImageUrl}" class="cover-thumb" alt="Cover preview">
+                            <div th:if="${book.coverImageUrl == null or book.coverImageUrl.isBlank()}" class="cover-thumb d-flex align-items-center justify-content-center small text-secondary">No cover</div>
+                            <div>
+                                <div class="catalog-title" th:text="${book.title != null and !book.title.isBlank() ? book.title : 'Untitled book'}">Untitled book</div>
+                                <div class="small text-secondary" th:text="${book.status != null ? book.status.displayName : 'Want to Read'}">Want to Read</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle me-1"></i>Save book</button>
+                        <a class="btn btn-outline-dark" th:href="@{/books}">Back to books</a>
+                    </div>
+                    <div class="mt-3 small text-secondary" th:if="${book.createdAt != null}">
+                        Created <span th:text="${#temporals.format(book.createdAt, 'dd MMM yyyy HH:mm')}">10 Apr 2026 21:00</span>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

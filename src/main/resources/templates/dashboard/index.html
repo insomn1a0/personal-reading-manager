@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('dashboard')}"></nav>
+
+<main class="container page-shell">
+    <section class="hero-card mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-8 position-relative">
+                <span class="badge text-bg-light border rounded-pill px-3 py-2 mb-3">Book tracking dashboard</span>
+                <h1 class="display-6 fw-bold mb-3">A cleaner, presentation-ready reading tracker.</h1>
+                <p class="section-subtitle fs-5 mb-0">StoryGraph-style progress feeling, Goodreads-style shelves, and a clean catalog layout without adding unnecessary complexity.</p>
+            </div>
+            <div class="col-lg-4">
+                <div class="app-card app-card-hover">
+                    <div class="muted-label mb-2">Yearly challenge</div>
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <div class="stat-value" th:text="${stats.goalCompletedBooks}">0</div>
+                            <div class="text-secondary">finished of <span th:text="${stats.readingGoal}">12</span> books</div>
+                        </div>
+                        <span class="badge text-bg-light border rounded-pill px-3 py-2" th:text="${stats.goalProgressPercent} + '%'">0%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" th:style="'width:' + ${stats.goalProgressPercent} + '%'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: alerts(${message}, ${error})}"></div>
+
+    <section class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total books</div>
+                        <div class="stat-value" th:text="${stats.totalBooks}">0</div>
+                    </div>
+                    <span class="stat-icon"><i class="bi bi-journal-richtext"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total authors</div>
+                        <div class="stat-value" th:text="${stats.totalAuthors}">0</div>
+                    </div>
+                    <span class="stat-icon"><i class="bi bi-pen-fill"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total categories</div>
+                        <div class="stat-value" th:text="${stats.totalCategories}">0</div>
+                    </div>
+                    <span class="stat-icon"><i class="bi bi-tags-fill"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Average rating</div>
+                        <div class="stat-value" th:text="${#numbers.formatDecimal(stats.averageRating, 1, 1)}">0.0</div>
+                    </div>
+                    <span class="stat-icon"><i class="bi bi-star-fill"></i></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="row g-4 mb-4">
+        <div class="col-12 col-lg-5">
+            <div class="app-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="section-title mb-0">Reading statuses</h2>
+                    <a th:href="@{/books}" class="btn btn-sm btn-outline-dark">Open library</a>
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    <div class="mini-stat">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge badge-soft bg-info-subtle text-info-emphasis">Want to Read</span>
+                            <strong th:text="${stats.wantToReadBooks}">0</strong>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge badge-soft bg-primary-subtle text-primary-emphasis">Reading</span>
+                            <strong th:text="${stats.readingBooks}">0</strong>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge badge-soft bg-success-subtle text-success-emphasis">Finished</span>
+                            <strong th:text="${stats.finishedBooks}">0</strong>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge badge-soft bg-danger-subtle text-danger-emphasis">DNF</span>
+                            <strong th:text="${stats.dnfBooks}">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-7">
+            <div class="app-card h-100">
+                <h2 class="section-title mb-4">Reading momentum</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mini-stat h-100">
+                            <div class="muted-label mb-2">Average progress</div>
+                            <div class="d-flex justify-content-between align-items-end mb-3">
+                                <div class="stat-value" th:text="${stats.averageProgress} + '%'">0%</div>
+                                <i class="bi bi-bar-chart-line-fill fs-4 text-primary"></i>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" th:style="'width:' + ${stats.averageProgress} + '%'"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mini-stat h-100">
+                            <div class="muted-label mb-2">Finished this year</div>
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div class="stat-value" th:text="${stats.goalCompletedBooks}">0</div>
+                                <i class="bi bi-trophy-fill fs-4 text-warning"></i>
+                            </div>
+                            <div class="text-secondary mt-2">Current goal: <span th:text="${stats.readingGoal}">12</span> books</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-1">
+                    <div class="muted-label mb-2">Challenge progress</div>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" th:style="'width:' + ${stats.goalProgressPercent} + '%'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="app-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title mb-0">Recently added books</h2>
+            <a class="btn btn-sm btn-primary" th:href="@{/books/create}"><i class="bi bi-plus-lg me-1"></i>Add book</a>
+        </div>
+        <div th:if="${#lists.isEmpty(recentBooks)}" class="text-secondary">No books available yet.</div>
+        <div class="row g-3" th:if="${!#lists.isEmpty(recentBooks)}">
+            <div class="col-12 col-md-6 col-xl-4" th:each="book : ${recentBooks}">
+                <a class="text-decoration-none text-reset d-block" th:href="@{/books/{id}(id=${book.id})}">
+                    <div class="catalog-row p-3 h-100">
+                        <div class="d-flex gap-3">
+                            <img th:if="${book.coverImageUrl != null and !book.coverImageUrl.isBlank()}"
+                                 th:src="${book.coverImageUrl}"
+                                 th:alt="${book.title}"
+                                 class="cover-thumb">
+                            <div th:if="${book.coverImageUrl == null or book.coverImageUrl.isBlank()}" class="cover-thumb d-flex align-items-center justify-content-center small text-secondary">
+                                No cover
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between gap-2">
+                                    <div>
+                                        <div class="catalog-title" th:text="${book.title}">Book title</div>
+                                        <div class="small text-secondary mt-1" th:text="${book.author.name}">Author</div>
+                                    </div>
+                                    <span class="badge badge-soft align-self-start" th:classappend="' ' + ${book.status.badgeClass}" th:text="${book.status.displayName}">Status</span>
+                                </div>
+                                <div class="chip-list mt-3">
+                                    <span class="badge text-bg-light border" th:if="${book.collectionName != null and !book.collectionName.isBlank()}" th:text="${book.collectionName}">Favorites</span>
+                                    <span class="badge text-bg-light border" th:if="${book.rating != null}" th:text="${book.rating} + '/5'">4/5</span>
+                                </div>
+                                <div class="progress mt-3">
+                                    <div class="progress-bar" role="progressbar" th:style="'width:' + ${book.progress} + '%'"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

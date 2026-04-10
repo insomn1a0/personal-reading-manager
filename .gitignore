@@ -1,0 +1,30 @@
+# Maven / Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Local build tooling
+.m2/
+.tools/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Environment / temporary files
+*.tmp
+*.swp
+*.swo
+

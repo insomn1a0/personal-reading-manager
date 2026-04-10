@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Books')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('books')}"></nav>
+
+<main class="container page-shell">
+    <section class="hero-card mb-4">
+        <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-end gap-4">
+            <div class="position-relative">
+                <span class="badge text-bg-light border rounded-pill px-3 py-2 mb-3">Catalog</span>
+                <h1 class="display-6 fw-bold mb-2">Your reading catalog</h1>
+                <p class="section-subtitle fs-5 mb-0">Search by title, author, or ISBN. Filter by category and status. Present the app like a real product, but keep the code understandable.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-primary" th:href="@{/books/create}"><i class="bi bi-plus-lg me-1"></i>Create book</a>
+                <a class="btn btn-outline-dark" th:href="@{/import/isbn}"><i class="bi bi-cloud-arrow-down me-1"></i>Import ISBN</a>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{fragments/layout :: alerts(${message}, ${error})}"></div>
+
+    <section class="app-card mb-4">
+        <form method="get" th:action="@{/books}" class="row g-3 align-items-end">
+            <div class="col-12 col-xl-4">
+                <label class="form-label" for="search">Search</label>
+                <input id="search" name="search" class="form-control" type="text" placeholder="Title, author, or ISBN" th:value="${search}">
+            </div>
+            <div class="col-12 col-sm-6 col-xl-2">
+                <label class="form-label" for="status">Status</label>
+                <select id="status" name="status" class="form-select">
+                    <option value="">All statuses</option>
+                    <option th:each="statusOption : ${statuses}"
+                            th:value="${statusOption.name()}"
+                            th:text="${statusOption.displayName}"
+                            th:selected="${selectedStatus == statusOption}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-2">
+                <label class="form-label" for="categoryId">Category</label>
+                <select id="categoryId" name="categoryId" class="form-select">
+                    <option value="">All categories</option>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.id}"
+                            th:text="${category.name}"
+                            th:selected="${selectedCategoryId != null and selectedCategoryId == category.id}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-2">
+                <label class="form-label" for="sort">Sort</label>
+                <select id="sort" name="sort" class="form-select">
+                    <option value="createdAt" th:selected="${selectedSort == 'createdAt'}">Newest</option>
+                    <option value="title" th:selected="${selectedSort == 'title'}">Title</option>
+                    <option value="year" th:selected="${selectedSort == 'year'}">Year</option>
+                    <option value="rating" th:selected="${selectedSort == 'rating'}">Rating</option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-2 d-grid">
+                <button type="submit" class="btn btn-dark"><i class="bi bi-funnel-fill me-1"></i>Apply</button>
+            </div>
+        </form>
+    </section>
+
+    <section th:if="${!#lists.isEmpty(books)}" class="app-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table catalog-table align-middle">
+                <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Rating</th>
+                    <th>Shelf</th>
+                    <th>Categories</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book : ${books}">
+                    <td>
+                        <div class="d-flex gap-3 align-items-start">
+                            <img th:if="${book.coverImageUrl != null and !book.coverImageUrl.isBlank()}"
+                                 th:src="${book.coverImageUrl}"
+                                 th:alt="${book.title}"
+                                 class="cover-thumb">
+                            <div th:if="${book.coverImageUrl == null or book.coverImageUrl.isBlank()}" class="cover-thumb d-flex align-items-center justify-content-center small text-secondary">
+                                No cover
+                            </div>
+                            <div>
+                                <a class="catalog-title text-decoration-none" th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}">Book title</a>
+                                <div class="small text-secondary mt-1">
+                                    <span th:text="${book.author.name}">Author</span>
+                                    <span th:if="${book.publishedYear != null}">&middot; <span th:text="${book.publishedYear}">2024</span></span>
+                                </div>
+                                <div class="small text-secondary mt-1" th:if="${book.isbn != null and !book.isbn.isBlank()}">
+                                    ISBN <span th:text="${book.isbn}">9780000000000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-soft" th:classappend="' ' + ${book.status.badgeClass}" th:text="${book.status.displayName}">Status</span>
+                    </td>
+                    <td style="min-width: 160px;">
+                        <div class="fw-semibold mb-2" th:text="${book.progress} + '%'">0%</div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" th:style="'width:' + ${book.progress} + '%'"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge text-bg-light border rounded-pill px-3 py-2" th:text="${book.rating != null ? book.rating + '/5' : 'Not rated'}">Not rated</span>
+                    </td>
+                    <td>
+                        <span class="badge text-bg-light border rounded-pill px-3 py-2"
+                              th:text="${book.collectionName != null and !book.collectionName.isBlank() ? book.collectionName : 'General'}">Favorites</span>
+                    </td>
+                    <td>
+                        <div class="chip-list" th:if="${!#sets.isEmpty(book.categories)}">
+                            <span class="badge text-bg-light border" th:each="category : ${book.categories}" th:text="${category.name}">Category</span>
+                        </div>
+                        <span class="text-secondary small" th:if="${#sets.isEmpty(book.categories)}">No categories</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+                            <a class="btn btn-sm btn-outline-dark" th:href="@{/books/{id}(id=${book.id})}"><i class="bi bi-eye me-1"></i>View</a>
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{/books/{id}/edit(id=${book.id})}"><i class="bi bi-pencil-square me-1"></i>Edit</a>
+                            <form method="post" th:action="@{/books/{id}/delete(id=${book.id})}" data-confirm="Delete this book?">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3 me-1"></i>Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section th:if="${#lists.isEmpty(books)}" class="empty-state">
+        <div class="mb-3"><i class="bi bi-journal-x display-5 text-secondary"></i></div>
+        <h2 class="h4 mb-2">No books match the current filters.</h2>
+        <p class="text-secondary mb-4">Try another search, remove some filters, or add your first book.</p>
+        <div class="d-flex justify-content-center gap-2 flex-wrap">
+            <a class="btn btn-primary" th:href="@{/books/create}">Create book</a>
+            <a class="btn btn-outline-secondary" th:href="@{/import/isbn}">Import ISBN</a>
+            <a class="btn btn-outline-dark" th:href="@{/books}">Clear filters</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

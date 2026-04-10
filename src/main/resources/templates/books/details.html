@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Book Details')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('books')}"></nav>
+
+<main class="container page-shell">
+    <div th:replace="~{fragments/layout :: alerts(${message}, ${error})}"></div>
+
+    <section class="hero-card mb-4">
+        <div class="d-flex flex-column flex-xl-row justify-content-between gap-4">
+            <div>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge badge-soft" th:classappend="' ' + ${book.status.badgeClass}" th:text="${book.status.displayName}">Status</span>
+                    <span class="badge text-bg-light border rounded-pill px-3 py-2"
+                          th:text="${book.collectionName != null and !book.collectionName.isBlank() ? book.collectionName : 'General'}">Favorites</span>
+                </div>
+                <h1 class="display-6 fw-bold mb-2" th:text="${book.title}">Book title</h1>
+                <p class="section-subtitle fs-5 mb-0">
+                    <span th:text="${book.author.name}">Author</span>
+                    <span th:if="${book.publishedYear != null}">&middot; <span th:text="${book.publishedYear}">2024</span></span>
+                </p>
+            </div>
+            <div class="d-flex flex-wrap gap-2 align-self-start">
+                <a class="btn btn-primary" th:href="@{/books/{id}/edit(id=${book.id})}"><i class="bi bi-pencil-square me-1"></i>Edit</a>
+                <a class="btn btn-outline-dark" th:href="@{/books}"><i class="bi bi-arrow-left me-1"></i>Back</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <section class="app-card h-100">
+                <div class="d-flex justify-content-center">
+                    <img th:if="${book.coverImageUrl != null and !book.coverImageUrl.isBlank()}"
+                         th:src="${book.coverImageUrl}"
+                         th:alt="${book.title}"
+                         class="cover-detail">
+                    <div th:if="${book.coverImageUrl == null or book.coverImageUrl.isBlank()}" class="placeholder-cover">
+                        No cover image
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="col-12 col-lg-8">
+            <section class="app-card mb-4">
+                <h2 class="section-title mb-4">Reading overview</h2>
+                <div class="meta-grid">
+                    <div class="mini-stat">
+                        <div class="muted-label mb-2">Progress</div>
+                        <div class="fw-bold fs-4 mb-2" th:text="${book.progress} + '%'">0%</div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" th:style="'width:' + ${book.progress} + '%'"></div>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="muted-label mb-2">Rating</div>
+                        <div class="fw-bold fs-4" th:text="${book.rating != null ? book.rating + '/5' : 'Not rated'}">Not rated</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="muted-label mb-2">ISBN</div>
+                        <div class="fw-bold fs-6" th:text="${book.isbn != null and !book.isbn.isBlank() ? book.isbn : 'Not provided'}">Not provided</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="muted-label mb-2">Added</div>
+                        <div class="fw-bold fs-6" th:text="${book.createdAt != null ? #temporals.format(book.createdAt, 'dd MMM yyyy HH:mm') : '-'}">10 Apr 2026</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="muted-label mb-2">Completed</div>
+                        <div class="fw-bold fs-6" th:text="${book.completedAt != null ? #temporals.format(book.completedAt, 'dd MMM yyyy HH:mm') : 'Not completed'}">Not completed</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="muted-label mb-2">Categories</div>
+                        <div class="chip-list" th:if="${!#sets.isEmpty(book.categories)}">
+                            <span class="badge text-bg-light border" th:each="category : ${book.categories}" th:text="${category.name}">Category</span>
+                        </div>
+                        <div class="text-secondary" th:if="${#sets.isEmpty(book.categories)}">No categories</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="app-card mb-4">
+                <h2 class="section-title mb-3">Description</h2>
+                <p class="mb-0 text-secondary" th:text="${book.description != null and !book.description.isBlank() ? book.description : 'No description added.'}">Description</p>
+            </section>
+
+            <section class="app-card mb-4" th:if="${book.favoriteQuote != null and !book.favoriteQuote.isBlank()}">
+                <h2 class="section-title mb-3">Favorite quote</h2>
+                <blockquote class="quote-card mb-0 fs-5" th:text="${book.favoriteQuote}">Quote</blockquote>
+            </section>
+
+            <section class="app-card">
+                <h2 class="section-title mb-3">Notes</h2>
+                <p class="mb-0 text-secondary" style="white-space: pre-wrap;" th:text="${book.notes != null and !book.notes.isBlank() ? book.notes : 'No notes added yet.'}">Notes</p>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

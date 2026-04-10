@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Authors')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('authors')}"></nav>
+
+<main class="container page-shell">
+    <section class="hero-card mb-4">
+        <span class="badge text-bg-light border rounded-pill px-3 py-2 mb-3">Authors</span>
+        <h1 class="display-6 fw-bold mb-2">Author directory</h1>
+        <p class="section-subtitle fs-5 mb-0">An improved author management page with book counts and a cleaner presentation.</p>
+    </section>
+
+    <div th:replace="~{fragments/layout :: alerts(${message}, ${error})}"></div>
+
+    <section class="app-card mb-4">
+        <h2 class="section-title mb-4">Add author</h2>
+        <form th:action="@{/authors}" method="post" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label" for="authorName">Name</label>
+                <input id="authorName" class="form-control" type="text" name="name" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="authorBio">Bio</label>
+                <input id="authorBio" class="form-control" type="text" name="bio">
+            </div>
+            <div class="col-md-2 d-grid">
+                <label class="form-label d-none d-md-block">&nbsp;</label>
+                <button class="btn btn-primary" type="submit"><i class="bi bi-plus-lg me-1"></i>Add</button>
+            </div>
+        </form>
+    </section>
+
+    <section>
+        <div class="row g-3">
+            <div class="col-12 col-lg-6" th:each="author : ${authors}">
+                <div class="app-card h-100 app-card-hover">
+                    <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
+                        <div>
+                            <h2 class="section-title mb-1" th:text="${author.name}">Author</h2>
+                            <p class="text-secondary mb-0" th:text="${author.bio != null and !author.bio.isBlank() ? author.bio : 'No biography added.'}">Bio</p>
+                        </div>
+                        <span class="badge text-bg-light border rounded-pill px-3 py-2">
+                            <i class="bi bi-book-fill me-1"></i><span th:text="${author.bookCount}">0</span>
+                        </span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label">Edit name</label>
+                            <input type="text" name="name" class="form-control" th:value="${author.name}" th:attr="form='author-form-' + ${author.id}" required>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label">Edit bio</label>
+                            <input type="text" name="bio" class="form-control" th:value="${author.bio}" th:attr="form='author-form-' + ${author.id}">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <form th:id="'author-form-' + ${author.id}" th:action="@{/authors/{id}(id=${author.id})}" method="post">
+                            <button class="btn btn-sm btn-outline-primary" type="submit"><i class="bi bi-check2 me-1"></i>Save</button>
+                        </form>
+                        <form th:action="@{/authors/{id}/delete(id=${author.id})}" method="post" data-confirm="Delete this author?">
+                            <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash3 me-1"></i>Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

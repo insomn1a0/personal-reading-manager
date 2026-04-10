@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Import by ISBN')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar('import')}"></nav>
+
+<main class="container page-shell">
+    <section class="hero-card mb-4">
+        <span class="badge text-bg-light border rounded-pill px-3 py-2 mb-3">Open Library import</span>
+        <h1 class="display-6 fw-bold mb-2">Import a book by ISBN</h1>
+        <p class="section-subtitle fs-5 mb-0">Keep the workflow simple: enter an ISBN, import metadata, then review and adjust the saved book in the editor.</p>
+    </section>
+
+    <div th:replace="~{fragments/layout :: alerts(${message}, ${error})}"></div>
+
+    <section class="row g-4">
+        <div class="col-12 col-lg-7">
+            <div class="app-card h-100">
+                <h2 class="section-title mb-4">ISBN import</h2>
+                <form th:action="@{/import/isbn}" method="post" class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label" for="isbn">ISBN</label>
+                        <input id="isbn" class="form-control" type="text" name="isbn" placeholder="Example: 9780140328721" required>
+                    </div>
+                    <div class="col-12 d-flex flex-wrap gap-2">
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-cloud-download-fill me-1"></i>Import book</button>
+                        <a class="btn btn-outline-dark" th:href="@{/books}">Back to books</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12 col-lg-5">
+            <div class="app-card h-100">
+                <h2 class="section-title mb-4">Imported fields</h2>
+                <div class="d-flex flex-column gap-3">
+                    <div class="mini-stat">Title and primary author</div>
+                    <div class="mini-stat">Published year when available</div>
+                    <div class="mini-stat">Cover image URL when available</div>
+                    <div class="mini-stat">Up to three categories</div>
+                    <div class="mini-stat">Default status set to Want to Read</div>
+                </div>
+                <div class="alert alert-info mt-4 mb-0 border-0">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    For simplicity, import saves the book directly and then redirects you to the edit page for review.
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
